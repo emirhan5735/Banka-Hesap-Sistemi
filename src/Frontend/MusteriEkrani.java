@@ -126,37 +126,90 @@ public class MusteriEkrani extends JFrame {
             }
         });
 
-        // TRANSFER (En Karmaşık Kısım)
+        // --- GÜNCELLENMİŞ TRANSFER BUTONU (İSİM GÖSTEREN VERSİYON) ---
         btnTransfer.addActionListener(e -> {
             Hesap gonderenHesap = hesapListesi.getSelectedValue();
             if (gonderenHesap == null) {
-                uyariVer();
+                JOptionPane.showMessageDialog(this, "Lütfen önce kendi listenizden para gönderecek hesabı seçin!");
                 return;
             }
 
-            // Hedef hesap nosunu iste
-            String hedefNoStr = JOptionPane.showInputDialog(this, "Alıcı Backend.Hesap Numarasını Girin:");
-            if (hedefNoStr == null) return;
+            // --- ÖZEL GÖSTERİM İÇİN YARDIMCI SINIF (LOCAL CLASS) ---
+            // Bu sınıf sadece listede "No - İsim Soyad" göstermek için var.
+            class HesapSecenek {
+                Hesap hesap;
+                String sahibi;
 
-            int hedefNo = Integer.parseInt(hedefNoStr);
-            Hesap aliciHesap = hedefHesabiBul(hedefNo);
+                public HesapSecenek(Hesap hesap, String sahibi) {
+                    this.hesap = hesap;
+                    this.sahibi = sahibi;
+                }
 
-            if (aliciHesap != null) {
-                String miktarStr = JOptionPane.showInputDialog(this, "Gönderilecek Miktar:");
-                if(miktarStr != null) {
-                    double miktar = Double.parseDouble(miktarStr);
-                    // Backend.Banka sınıfındaki static metodu kullanıyoruz
-                    boolean sonuc = Banka.paraTransferi(gonderenHesap, aliciHesap, miktar);
+                @Override
+                public String toString() {
+                    // İŞTE BURASI LİSTEDE GÖRÜNECEK YAZIYI BELİRLER:
+                    return "Hesap No: " + hesap.getHesapNo() + " - " + sahibi;
+                }
+            }
+            // -------------------------------------------------------
 
-                    if(sonuc) {
-                        JOptionPane.showMessageDialog(this, "Transfer Başarılı!");
-                        hesapListesi.repaint();
-                    } else {
-                        JOptionPane.showMessageDialog(this, "Transfer Başarısız (Bakiye yetersiz olabilir).");
+            // Listeyi hazırlayalım
+            java.util.ArrayList<HesapSecenek> secenekler = new java.util.ArrayList<>();
+
+            // Tüm bankayı tara
+            for (Musteri m : Banka.musteriler) {
+                for (Hesap h : m.getHesaplar()) {
+                    // Kendisi hariç diğer hesapları listeye al
+                    if (h != gonderenHesap) {
+                        // Hesabı ve sahibinin adını paketleyip listeye ekliyoruz
+                        secenekler.add(new HesapSecenek(h, m.getAdSoyad()));
                     }
                 }
-            } else {
-                JOptionPane.showMessageDialog(this, "Bu numaraya ait hesap bulunamadı!");
+            }
+
+            if (secenekler.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Sistemde başka hesap bulunamadı.");
+                return;
+            }
+
+            // Listeyi kullanıcıya göster
+            HesapSecenek[] secenekDizisi = secenekler.toArray(new HesapSecenek[0]);
+
+            HesapSecenek secilenSecenek = (HesapSecenek) JOptionPane.showInputDialog(
+                    this,
+                    "Alıcı Hesabı Seçin:",
+                    "Transfer",
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    secenekDizisi,
+                    secenekDizisi[0]
+            );
+
+            // Eğer kullanıcı bir seçim yaptıysa
+            if (secilenSecenek != null) {
+                // Kutudan çıkan "seçenek" nesnesinin içindeki asıl "hesap" nesnesini alıyoruz
+                Hesap aliciHesap = secilenSecenek.hesap;
+
+                String miktarStr = JOptionPane.showInputDialog(this, "Gönderilecek Miktar (TL):");
+                if (miktarStr != null && !miktarStr.isEmpty()) {
+                    try {
+                        double miktar = Double.parseDouble(miktarStr);
+                        boolean sonuc = Banka.paraTransferi(gonderenHesap, aliciHesap, miktar);
+
+                        if (sonuc) {
+                            JOptionPane.showMessageDialog(this,
+                                    "Transfer Başarılı!\n" +
+                                            "Alıcı: " + secilenSecenek.sahibi + "\n" + // İsmi buradan alıp gösteriyoruz
+                                            "Tutar: " + miktar + " TL"
+                            );
+                            hesapListesi.repaint();
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Yetersiz Bakiye!");
+                        }
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(this, "Geçersiz Tutar");
+                    }
+                }
             }
         });
     }
