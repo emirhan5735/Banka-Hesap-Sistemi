@@ -17,12 +17,12 @@ public class AnaEkran extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        // --- Veri Modeli ---
+
         listModel = new DefaultListModel<>();
 
         musteriListesi = new JList<>(listModel);
 
-        // --- Üst Panel (Müşteri Ekleme) ---
+
         JPanel panelEkle = new JPanel(new GridLayout(4, 2));
         panelEkle.setBorder(BorderFactory.createTitledBorder("Yeni Müşteri Ekle"));
 
@@ -36,19 +36,17 @@ public class AnaEkran extends JFrame {
         panelEkle.add(new JLabel("TC:")); panelEkle.add(txtTc);
         panelEkle.add(new JLabel("")); panelEkle.add(btnEkle); // Boşluk için label
 
-        // --- Alt Panel (Giriş Butonu) ---
+
         JButton btnGiris = new JButton("Seçili Müşterinin İşlemlerine Git >");
         btnGiris.setFont(new Font("Arial", Font.BOLD, 14));
         btnGiris.setBackground(Color.CYAN);
 
-        // --- Yerleşim ---
+
         add(panelEkle, BorderLayout.NORTH);
         add(new JScrollPane(musteriListesi), BorderLayout.CENTER);
         add(btnGiris, BorderLayout.SOUTH);
 
-        // --- Olaylar (Action Listeners) ---
 
-        // Müşteri Ekleme Butonu
         btnEkle.addActionListener(e -> {
             String ad = txtAd.getText();
             String soyad = txtSoyad.getText();
@@ -66,7 +64,7 @@ public class AnaEkran extends JFrame {
             }
         });
 
-        // Giriş Butonu
+
         btnGiris.addActionListener(e -> {
             Musteri seciliMusteri = musteriListesi.getSelectedValue();
             if (seciliMusteri != null) {
@@ -79,7 +77,6 @@ public class AnaEkran extends JFrame {
     }
 
     public static void main(String[] args) {
-        // Uygulamayı Başlat
         SwingUtilities.invokeLater(() -> new AnaEkran().setVisible(true));
     }
 }

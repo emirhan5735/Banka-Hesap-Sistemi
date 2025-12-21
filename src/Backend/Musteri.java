@@ -20,7 +20,6 @@ public class Musteri {
     }
 
     public void hesapSil(int hesapNo) {
-        // Lambda expression ile hesap no eşleşeni bul ve sil (Java 8+)
         hesaplar.removeIf(h -> h.getHesapNo() == hesapNo);
     }
 

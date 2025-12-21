@@ -12,11 +12,11 @@ public class VadesizHesap extends Hesap {
         if (getBakiye() >= miktar) {
             bakiyeAzalt(miktar);
             System.out.println("Vadesiz hesaptan " + miktar + " TL çekildi.");
-            return true; // İşlem başarılı
+            return true;
         }
         else {
             System.out.println("Yetersiz Bakiye!");
-            return false; // İşlem başarısız
+            return false;
         }
     }
 }

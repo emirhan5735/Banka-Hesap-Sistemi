@@ -13,7 +13,7 @@ public abstract class Hesap {
     }
 
 
-    // Ortak Metot: Para Yatırma (Her hesapta aynıdır)
+
     public void paraYatir(double miktar) {
         if (miktar > 0) {
             this.bakiye += miktar;
@@ -21,18 +21,18 @@ public abstract class Hesap {
         }
     }
 
-    // Soyut Metot: Para Çekme
-    // Başarılı olursa true, bakiye yetmezse false dönecek.
+
+
     public abstract boolean paraCek(double miktar);
 
 
-    // Bakiye Sorgulama (Getter)
+
     public double getBakiye() {
         return bakiye;
     }
 
 
-    // Alt sınıflar bakiyeyi değiştirebilsin diye protected setter (veya paraCek içinde kullanmak için)
+
     protected void bakiyeAzalt(double miktar) {
         this.bakiye -= miktar;
     }

@@ -10,34 +10,33 @@ public class MusteriEkrani extends JFrame {
     private DefaultListModel<Hesap> hesapListModel;
     private JList<Hesap> hesapListesi;
 
-    // Constructor: Hangi müşteri ile işlem yapacağımızı bilmeliyiz
+
     public MusteriEkrani(Musteri musteri) {
         this.musteri = musteri;
 
         setTitle("Müşteri Paneli: " + musteri.getAdSoyad());
         setSize(600, 500);
-        // Bu pencere kapanınca sadece kendisi kapansın, ana program durmasın:
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        // --- Sol Panel (Backend.Hesap Listesi) ---
+
         hesapListModel = new DefaultListModel<>();
-        hesapListesiUpdate(); // Listeyi doldur
+        hesapListesiUpdate();
         hesapListesi = new JList<>(hesapListModel);
 
         JScrollPane scrollPane = new JScrollPane(hesapListesi);
         scrollPane.setBorder(BorderFactory.createTitledBorder("Hesaplarınız"));
 
-        // --- Sağ Panel (İşlemler) ---
-        JPanel sagPanel = new JPanel(new GridLayout(2, 1)); // Üstte hesap aç, altta butonlar
 
-        // 1. Yeni Backend.Hesap Açma Bölümü
+        JPanel sagPanel = new JPanel(new GridLayout(2, 1));
+
+
         JPanel pnlYeniHesap = new JPanel(new GridLayout(5, 1));
         pnlYeniHesap.setBorder(BorderFactory.createTitledBorder("Yeni Backend.Hesap Aç"));
 
         JRadioButton rbVadesiz = new JRadioButton("Vadesiz Backend.Hesap", true);
         JRadioButton rbVadeli = new JRadioButton("Vadeli Backend.Hesap");
-        ButtonGroup bg = new ButtonGroup(); // İkisi aynı anda seçilmesin diye
+        ButtonGroup bg = new ButtonGroup();
         bg.add(rbVadesiz); bg.add(rbVadeli);
 
         JTextField txtIlkBakiye = new JTextField("0");
@@ -49,7 +48,7 @@ public class MusteriEkrani extends JFrame {
         pnlYeniHesap.add(txtIlkBakiye);
         pnlYeniHesap.add(btnHesapAc);
 
-        // 2. Butonlar Bölümü (Para Yatır/Çek/Transfer)
+
         JPanel pnlIslemler = new JPanel(new GridLayout(3, 1, 5, 5));
         pnlIslemler.setBorder(BorderFactory.createTitledBorder("Seçili Backend.Hesap İşlemleri"));
 
@@ -67,23 +66,21 @@ public class MusteriEkrani extends JFrame {
         add(scrollPane, BorderLayout.CENTER);
         add(sagPanel, BorderLayout.EAST);
 
-        // --- İşlevler (Listeners) ---
 
-        // HESAP AÇMA
         btnHesapAc.addActionListener(e -> {
             try {
                 double bakiye = Double.parseDouble(txtIlkBakiye.getText());
-                int rastgeleHesapNo = 1000 + new Random().nextInt(9000); // 1000-9999 arası no
+                int rastgeleHesapNo = 1000 + new Random().nextInt(9000);
 
                 Hesap yeniHesap;
                 if (rbVadesiz.isSelected()) {
                     yeniHesap = new VadesizHesap(rastgeleHesapNo, bakiye);
                 } else {
-                    yeniHesap = new VadeliHesap(rastgeleHesapNo, bakiye, 15.0); // %15 faiz sabit
+                    yeniHesap = new VadeliHesap(rastgeleHesapNo, bakiye, 15.0);
                 }
 
                 musteri.hesapEkle(yeniHesap);
-                hesapListesiUpdate(); // Listeyi yenile
+                hesapListesiUpdate();
                 JOptionPane.showMessageDialog(this, "Backend.Hesap Açıldı! No: " + rastgeleHesapNo);
 
             } catch (NumberFormatException ex) {
@@ -91,7 +88,7 @@ public class MusteriEkrani extends JFrame {
             }
         });
 
-        // PARA YATIRMA
+
         btnYatir.addActionListener(e -> {
             Hesap seciliHesap = hesapListesi.getSelectedValue();
             if (seciliHesap != null) {
@@ -99,21 +96,21 @@ public class MusteriEkrani extends JFrame {
                 if(miktarStr != null) {
                     double miktar = Double.parseDouble(miktarStr);
                     seciliHesap.paraYatir(miktar);
-                    hesapListesi.repaint(); // Ekrandaki yazıyı güncelle
+                    hesapListesi.repaint();
                 }
             } else {
                 uyariVer();
             }
         });
 
-        // PARA ÇEKME
+
         btnCek.addActionListener(e -> {
             Hesap seciliHesap = hesapListesi.getSelectedValue();
             if (seciliHesap != null) {
                 String miktarStr = JOptionPane.showInputDialog(this, "Çekilecek Miktar:");
                 if(miktarStr != null) {
                     double miktar = Double.parseDouble(miktarStr);
-                    boolean sonuc = seciliHesap.paraCek(miktar); // Polymorphism burada çalışır!
+                    boolean sonuc = seciliHesap.paraCek(miktar);
                     if(sonuc) {
                         JOptionPane.showMessageDialog(this, "İşlem Başarılı");
                         hesapListesi.repaint();
@@ -126,7 +123,7 @@ public class MusteriEkrani extends JFrame {
             }
         });
 
-        // --- GÜNCELLENMİŞ TRANSFER BUTONU (İSİM GÖSTEREN VERSİYON) ---
+
         btnTransfer.addActionListener(e -> {
             Hesap gonderenHesap = hesapListesi.getSelectedValue();
             if (gonderenHesap == null) {
@@ -134,8 +131,7 @@ public class MusteriEkrani extends JFrame {
                 return;
             }
 
-            // --- ÖZEL GÖSTERİM İÇİN YARDIMCI SINIF (LOCAL CLASS) ---
-            // Bu sınıf sadece listede "No - İsim Soyad" göstermek için var.
+
             class HesapSecenek {
                 Hesap hesap;
                 String sahibi;
@@ -147,21 +143,18 @@ public class MusteriEkrani extends JFrame {
 
                 @Override
                 public String toString() {
-                    // İŞTE BURASI LİSTEDE GÖRÜNECEK YAZIYI BELİRLER:
                     return "Hesap No: " + hesap.getHesapNo() + " - " + sahibi;
                 }
             }
-            // -------------------------------------------------------
 
-            // Listeyi hazırlayalım
+
+
             java.util.ArrayList<HesapSecenek> secenekler = new java.util.ArrayList<>();
 
-            // Tüm bankayı tara
+
             for (Musteri m : Banka.musteriler) {
                 for (Hesap h : m.getHesaplar()) {
-                    // Kendisi hariç diğer hesapları listeye al
                     if (h != gonderenHesap) {
-                        // Hesabı ve sahibinin adını paketleyip listeye ekliyoruz
                         secenekler.add(new HesapSecenek(h, m.getAdSoyad()));
                     }
                 }
@@ -172,7 +165,7 @@ public class MusteriEkrani extends JFrame {
                 return;
             }
 
-            // Listeyi kullanıcıya göster
+
             HesapSecenek[] secenekDizisi = secenekler.toArray(new HesapSecenek[0]);
 
             HesapSecenek secilenSecenek = (HesapSecenek) JOptionPane.showInputDialog(
@@ -185,9 +178,9 @@ public class MusteriEkrani extends JFrame {
                     secenekDizisi[0]
             );
 
-            // Eğer kullanıcı bir seçim yaptıysa
+
             if (secilenSecenek != null) {
-                // Kutudan çıkan "seçenek" nesnesinin içindeki asıl "hesap" nesnesini alıyoruz
+
                 Hesap aliciHesap = secilenSecenek.hesap;
 
                 String miktarStr = JOptionPane.showInputDialog(this, "Gönderilecek Miktar (TL):");
@@ -199,7 +192,7 @@ public class MusteriEkrani extends JFrame {
                         if (sonuc) {
                             JOptionPane.showMessageDialog(this,
                                     "Transfer Başarılı!\n" +
-                                            "Alıcı: " + secilenSecenek.sahibi + "\n" + // İsmi buradan alıp gösteriyoruz
+                                            "Alıcı: " + secilenSecenek.sahibi + "\n" +
                                             "Tutar: " + miktar + " TL"
                             );
                             hesapListesi.repaint();
@@ -214,7 +207,7 @@ public class MusteriEkrani extends JFrame {
         });
     }
 
-    // Yardımcı Metot: Listeyi Yenile
+
     private void hesapListesiUpdate() {
         hesapListModel.clear();
         for (Hesap h : musteri.getHesaplar()) {
@@ -222,7 +215,7 @@ public class MusteriEkrani extends JFrame {
         }
     }
 
-    // Yardımcı Metot: Tüm bankadaki müşterileri tarayıp hedef hesabı bulur
+
     private Hesap hedefHesabiBul(int hesapNo) {
         for (Musteri m : Banka.musteriler) {
             for (Hesap h : m.getHesaplar()) {
