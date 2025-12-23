@@ -9,22 +9,15 @@ public class VadeliHesap extends Hesap {
         this.faizOrani = faizOrani;
     }
 
-
     @Override
-    public boolean paraCek(double miktar) {
+    public boolean paraCek(double miktar, String aciklama) {
         if (getBakiye() >= miktar) {
             bakiyeAzalt(miktar);
-            System.out.println("Vadeli hesaptan para çekildi. (Dikkat: Vade bozuldu)");
+            islemEkle(aciklama + " (Vade Bozuldu)", -miktar);
             return true;
         }
-        else {
-            System.out.println("Yetersiz Bakiye!");
-            return false;
-        }
+        return false;
     }
 
-
-    public double getFaizOrani() {
-        return faizOrani;
-    }
+    public double getFaizOrani() { return faizOrani; }
 }

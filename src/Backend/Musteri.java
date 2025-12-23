@@ -1,26 +1,32 @@
 package Backend;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Musteri {
+public class Musteri implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     private String ad;
     private String soyad;
     private String tcKimlik;
+    private String sifre;
     private ArrayList<Hesap> hesaplar;
 
-    public Musteri(String ad, String soyad, String tcKimlik) {
+    public Musteri(String ad, String soyad, String tcKimlik, String sifre) {
         this.ad = ad;
         this.soyad = soyad;
         this.tcKimlik = tcKimlik;
+        this.sifre = sifre;
         this.hesaplar = new ArrayList<>();
+    }
+
+    public boolean sifreKontrol(String girilenSifre) {
+        return this.sifre.equals(girilenSifre);
     }
 
     public void hesapEkle(Hesap hesap) {
         hesaplar.add(hesap);
-    }
-
-    public void hesapSil(int hesapNo) {
-        hesaplar.removeIf(h -> h.getHesapNo() == hesapNo);
     }
 
     public ArrayList<Hesap> getHesaplar() {
@@ -33,10 +39,5 @@ public class Musteri {
 
     public String getTcKimlik() {
         return tcKimlik;
-    }
-
-    @Override
-    public String toString() {
-        return ad + " " + soyad + " (TC: " + tcKimlik + ")";
     }
 }
