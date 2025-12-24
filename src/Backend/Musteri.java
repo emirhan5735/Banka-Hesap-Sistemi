@@ -13,6 +13,7 @@ public class Musteri implements Serializable {
     private String sifre;
     private ArrayList<Hesap> hesaplar;
 
+
     public Musteri(String ad, String soyad, String tcKimlik, String sifre) {
         this.ad = ad;
         this.soyad = soyad;
@@ -21,21 +22,26 @@ public class Musteri implements Serializable {
         this.hesaplar = new ArrayList<>();
     }
 
+
     public boolean sifreKontrol(String girilenSifre) {
         return this.sifre.equals(girilenSifre);
     }
+
 
     public void hesapEkle(Hesap hesap) {
         hesaplar.add(hesap);
     }
 
+
     public ArrayList<Hesap> getHesaplar() {
         return hesaplar;
     }
 
+
     public String getAdSoyad() {
         return ad + " " + soyad;
     }
+
 
     public String getTcKimlik() {
         return tcKimlik;

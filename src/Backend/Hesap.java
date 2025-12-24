@@ -17,6 +17,7 @@ public abstract class Hesap implements Serializable {
 
     private ArrayList<Islem> islemler;
 
+
     public Hesap(int hesapNo, double baslangicBakiyesi, String hesapTuru) {
         this.hesapNo = hesapNo;
         this.bakiye = baslangicBakiyesi;
@@ -32,6 +33,7 @@ public abstract class Hesap implements Serializable {
         Islem yeniIslem = new Islem(aciklama, tutar);
         islemler.add(yeniIslem);
     }
+
 
     public ArrayList<Islem> getIslemler() {
         return islemler;
@@ -57,6 +59,7 @@ public abstract class Hesap implements Serializable {
     public boolean paraCek(double miktar) {
         return paraCek(miktar, "Para Çekme");
     }
+
 
     protected void bakiyeAzalt(double miktar) {
         this.bakiye -= miktar;

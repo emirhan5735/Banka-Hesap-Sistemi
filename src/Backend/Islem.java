@@ -22,9 +22,11 @@ public class Islem implements Serializable {
         return tarih.format(format);
     }
 
+
     public String getAciklama() {
         return aciklama;
     }
+
 
     public double getTutar() {
         return tutar;

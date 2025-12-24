@@ -11,6 +11,7 @@ public class VadesizHesap extends Hesap implements KrediAlabilir {
         super(hesapNo, baslangicBakiyesi, "Vadesiz");
     }
 
+
     @Override
     public boolean paraCek(double miktar, String aciklama) {
         if (getBakiye() >= miktar) {
